@@ -1,0 +1,1 @@
+50 0 * * *      root    /usr/local/sbin/mail_wrapper.sh /usr/local/sbin/do_backup.sh
