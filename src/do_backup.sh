@@ -56,9 +56,9 @@ function not() {
 function clean_old() {
         count=0
         find $1 \
-                -type d \
                 -mindepth 1 \
                 -maxdepth 1 \
+                -type d \
                 -iname "????-??-??*" | 
                         sort -r | 
                         while read file; do
