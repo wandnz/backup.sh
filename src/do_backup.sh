@@ -67,7 +67,7 @@ function clean_old() {
                                         minor Pruning old $file
                                         if [ $BACKUP == "yes" ]; then
                                                 rm -rf $file
-                                                rm -f $DESTINATION/logs/$HOST/$(basename $file)
+                                                rm -f $DESTINATION/logs/$HOST/$(basename $file).log
                                         else
                                                 minor '(just testing)'
                                         fi
@@ -112,7 +112,7 @@ function backup() {
                 --delete \
                 $newexclude \
                 -e "'ssh -i $KEY -o BatchMode=yes'" \
-                $1:$2 $3 >> /$DESTINATION/logs/${HOST}/$(date +%Y-%m-%d.%H:%M:%S).log
+                $1:$2 $3 >> ${DESTINATION}/logs/${HOST}/current.log
         # Ignore error 24 ("File vanished")
         ERRLEV=$?
         if [ $ERRLEV -ne 24 -a $ERRLEV -ne 0 ]; then
@@ -229,8 +229,12 @@ for i in $hosts; do
         if [ -d ${DESTINATION}/backups/$HOST/current ]; then
                 minor Copying old backup
                 if [ $BACKUP == "yes" ]; then
+                        current_ts=$(date "+%Y-%m-%d.%H:%M:%S" -r "${DESTINATION}/backups/${HOST}/current")
                         cp -laR ${DESTINATION}/backups/$HOST/current \
-                                ${DESTINATION}/backups/$HOST/$(date "+%Y-%m-%d.%H:%M:%S" -r ${DESTINATION}/backups/$HOST/current )
+                                ${DESTINATION}/backups/$HOST/${current_ts}
+                        if [ -f "${DESTINATION}/logs/${HOST}/current.log" ]; then
+                            mv "${DESTINATION}/logs/${HOST}/current.log" "${DESTINATION}/logs/${HOST}/${current_ts}.log"
+                        fi
                 else
                         minor "(just pretending)"
                 fi
